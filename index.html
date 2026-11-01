@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#04060A">
+<title>یادآور</title>
+<link rel="manifest" href="manifest.webmanifest">
+<style>
+:root{
+  --bg:#04060A; --ink:#DDF4FF; --dim:#5F7587; --line:#13202C;
+  --ice:#8FEAFF; --neon:#22E4FF; --violet:#9B8CFF; --warn:#FF5C8A;
+  color-scheme:dark;
+}
+*{box-sizing:border-box;margin:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%}
+body{background:var(--bg);color:var(--ink);font:16px/1.7 Vazirmatn,Tahoma,"Segoe UI",system-ui,sans-serif;
+  padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom);overflow-x:hidden}
+main{max-width:560px;margin:0 auto;padding:18px 22px 60px}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+button:focus-visible,input:focus-visible,textarea:focus-visible{outline:1px solid var(--neon);outline-offset:4px}
+svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.glow{color:var(--neon);filter:drop-shadow(0 0 5px var(--neon)) drop-shadow(0 0 14px rgba(34,228,255,.45))}
+.vio{color:var(--violet);filter:drop-shadow(0 0 5px var(--violet))}
+
+nav{display:flex;border-bottom:1px solid var(--line);margin-bottom:34px}
+nav button{flex:1;display:flex;gap:9px;align-items:center;justify-content:center;padding:12px 0;color:var(--dim);
+  border-bottom:1px solid transparent;margin-bottom:-1px;transition:color .2s,border-color .2s}
+nav button.on{color:var(--ice);border-color:var(--neon);box-shadow:0 8px 14px -12px var(--neon)}
+nav button.on svg{filter:drop-shadow(0 0 5px var(--neon))}
+section{display:none}section.on{display:block}
+
+/* mic */
+.micwrap{display:flex;justify-content:center;margin:6px 0 30px}
+.mic{width:104px;height:104px;border-radius:50%;border:1px solid var(--neon);display:grid;place-items:center;color:var(--neon);
+  box-shadow:0 0 22px rgba(34,228,255,.25),inset 0 0 22px rgba(34,228,255,.12);transition:.25s}
+.mic svg{width:40px;height:40px;filter:drop-shadow(0 0 6px var(--neon))}
+.mic.on{border-color:var(--warn);color:var(--warn);animation:pulse 1.2s ease-out infinite}
+.mic.on svg{filter:drop-shadow(0 0 7px var(--warn))}
+.vio-m{border-color:var(--violet);color:var(--violet);box-shadow:0 0 22px rgba(155,140,255,.25),inset 0 0 22px rgba(155,140,255,.1)}
+.vio-m svg{filter:drop-shadow(0 0 6px var(--violet))}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(255,92,138,.5)}100%{box-shadow:0 0 0 30px rgba(255,92,138,0)}}
+
+.row{display:flex;align-items:center;gap:12px}
+.fld{width:100%;background:none;border:0;border-bottom:1px solid var(--line);color:var(--ink);font:inherit;padding:10px 2px;
+  transition:border-color .2s,box-shadow .2s;resize:none}
+.fld:focus{outline:0;border-color:var(--neon);box-shadow:0 8px 14px -12px var(--neon)}
+.fld::placeholder{color:var(--dim)}
+.lang{min-width:42px;color:var(--ice);border:1px solid var(--line);border-radius:20px;padding:2px 10px;font-size:13px;direction:ltr}
+.lang:hover{border-color:var(--neon)}
+.chips{display:flex;flex-wrap:wrap;gap:6px 18px;margin:14px 0 22px}
+.chips button{color:var(--dim);font-size:14px;border-bottom:1px dashed var(--line);padding-bottom:1px}
+.chips button:hover{color:var(--ice);border-color:var(--neon)}
+.go{display:flex;align-items:center;gap:10px;margin:8px auto 34px;color:var(--ice);padding:10px 26px;border:1px solid var(--neon);border-radius:30px;
+  box-shadow:0 0 16px rgba(34,228,255,.2)}
+.go:hover{background:rgba(34,228,255,.07)}
+
+/* list */
+.item{display:flex;gap:14px;align-items:center;padding:14px 0;border-bottom:1px solid var(--line)}
+.item .t{flex:1;min-width:0}
+.item .tx{overflow-wrap:anywhere}
+.item .tm{font-size:13px;color:var(--dim)}
+.item.due .tx{color:var(--warn)} .item.due>svg:first-child{color:var(--warn);filter:drop-shadow(0 0 5px var(--warn))}
+.item.past{opacity:.45}
+.item button{color:var(--dim);padding:6px}
+.item button:hover{color:var(--neon)} .item button.del:hover{color:var(--warn)}
+.empty{color:var(--dim);text-align:center;padding:26px 0}
+
+/* translator */
+.tr-top{display:flex;justify-content:space-between;color:var(--dim);font-size:13px;direction:ltr;margin-top:8px}
+.tr-box{position:relative}
+.tr-box .acts{display:flex;gap:4px;justify-content:flex-end;color:var(--dim)}
+.tr-box .acts button{padding:6px;color:var(--dim)} .tr-box .acts .lang{padding:0 12px;line-height:28px;height:30px;align-self:center;color:var(--ice)} .tr-box .acts button:hover{color:var(--violet)}
+.swap{display:flex;justify-content:center;border-top:1px solid var(--line);margin:10px 0}
+.swap span{background:var(--bg);margin-top:-14px;padding:0 12px;color:var(--violet)}
+#out{min-height:90px;color:var(--ice)}
+
+  .vs{min-height:26px;text-align:center;color:var(--ice);font-size:14px;margin:-16px 0 18px;line-height:1.7}.vs.err{color:var(--warn)}
+#toast{position:fixed;inset:auto 0 calc(22px + env(safe-area-inset-bottom)) 0;text-align:center;color:var(--ice);pointer-events:none;opacity:0;transition:opacity .3s}
+#toast span{display:inline-block;background:var(--bg);border-bottom:1px solid var(--neon);padding:4px 14px;box-shadow:0 8px 14px -10px var(--neon)}
+#toast.on{opacity:1}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+ <defs>
+  <symbol id="i-mic" viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3M9 21h6"/></symbol>
+  <symbol id="i-bell" viewBox="0 0 24 24"><path d="M6 17V11a6 6 0 0 1 12 0v6l1.5 2h-15zM10 21h4"/></symbol>
+  <symbol id="i-tr" viewBox="0 0 24 24"><path d="M4 5h9M8.5 3v2M6 5c.5 3.5 3 6 6 7M12 5c-.5 3-3 6.500-7 8.500M13 21l4-10 4 10M14.500 17.500h5"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M4 12.500l5 5L20 6.500"/></symbol>
+  <symbol id="i-trash" viewBox="0 0 24 24"><path d="M5 7h14M10 7V4h4v3M7 7l1 13h8l1-13"/></symbol>
+  <symbol id="i-snooze" viewBox="0 0 24 24"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l3 2M5 4l-2 2M19 4l2 2"/></symbol>
+  <symbol id="i-swap" viewBox="0 0 24 24"><path d="M7 4v16M3 16l4 4 4-4M17 20V4M13 8l4-4 4 4"/></symbol>
+  <symbol id="i-copy" viewBox="0 0 24 24"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h8"/></symbol>
+  <symbol id="i-spk" viewBox="0 0 24 24"><path d="M4 9v6h4l5 4V5L8 9zM16.500 8.500a5 5 0 0 1 0 7M19 6a8.500 8.500 0 0 1 0 12"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></symbol>
+ </defs>
+</svg>
+
+<main>
+ <nav>
+  <button id="n1" class="on"><svg class="glow"><use href="#i-bell"/></svg>یادآور</button>
+  <button id="n2"><svg><use href="#i-tr"/></svg>مترجم</button>
+ </nav>
+
+ <section id="s1" class="on">
+  <div class="micwrap"><button class="mic" id="mic1" aria-label="گفتن یادآور"><svg><use href="#i-mic"/></svg></button></div>
+  <div class="row">
+   <input class="fld" id="txt" placeholder="چی یادت بیاد؟" autocomplete="off">
+   <button class="lang" id="lg1" title="زبان صدا">فا</button>
+  </div>
+  <div class="row" style="margin-top:18px">
+   <input class="fld" id="when" type="datetime-local" style="direction:ltr;text-align:right">
+  </div>
+  <div class="chips" id="chips">
+   <button data-m="10">+۱۰ دقیقه</button><button data-m="30">+۳۰ دقیقه</button><button data-m="60">+۱ ساعت</button>
+   <button data-m="180">+۳ ساعت</button><button data-d="1">فردا ۹ صبح</button>
+  </div>
+  <button class="go" id="add"><svg class="glow"><use href="#i-plus"/></svg>ثبت یادآور</button>
+  <div id="list"></div>
+ </section>
+
+ <section id="s2">
+  <div class="micwrap"><button class="mic vio-m" id="mic2" aria-label="گفتن برای ترجمه"><svg><use href="#i-mic"/></svg></button></div>
+  <div class="tr-box">
+   <textarea class="fld" id="src" rows="3" placeholder="فارسی یا English — خودکار تشخیص میدم"></textarea>
+   <div class="acts"><button class="lang" id="lg2" title="زبان صدا">فا</button><button id="clr" aria-label="پاک کردن"><svg><use href="#i-x"/></svg></button></div>
+  </div>
+  <div class="swap"><span><svg><use href="#i-swap"/></svg></span></div>
+  <div class="tr-box">
+   <div class="fld" id="out" style="border-color:var(--line)"></div>
+   <div class="acts"><button id="spk" aria-label="خواندن"><svg><use href="#i-spk"/></svg></button><button id="cp" aria-label="کپی"><svg><use href="#i-copy"/></svg></button></div>
+  </div>
+ </section>
+</main>
+<div id="toast"><span id="tmsg"></span></div>
+
+<script>
+const $=s=>document.querySelector(s), icon=n=>`<svg><use href="#i-${n}"/></svg>`;
+const fa=n=>String(n).replace(/\d/g,d=>'۰۱۲۳۴۵۶۷۸۹'[d]);
+let items=[]; try{items=JSON.parse(localStorage.getItem('yv')||'[]')}catch(e){}
+const save=()=>{try{localStorage.setItem('yv',JSON.stringify(items))}catch(e){}};
+function toast(m){$('#tmsg').textContent=m;$('#toast').classList.add('on');clearTimeout(toast.t);toast.t=setTimeout(()=>$('#toast').classList.remove('on'),2800)}
+const loc=d=>{const p=n=>String(n).padStart(2,'0');return `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())}T${p(d.getHours())}:${p(d.getMinutes())}`};
+const fmt=ts=>new Intl.DateTimeFormat('fa-IR-u-ca-persian',{weekday:'short',day:'numeric',month:'long',hour:'2-digit',minute:'2-digit'}).format(new Date(ts));
+
+/* tabs */
+['n1','n2'].forEach((id,i)=>$('#'+id).onclick=()=>{
+  ['n1','n2'].forEach((x,j)=>{$('#'+x).classList.toggle('on',i===j);$('#'+x).querySelector('svg').classList.toggle('glow',i===j&&j===0);$('#'+x).querySelector('svg').classList.toggle('vio',i===j&&j===1)});
+  $('#s1').classList.toggle('on',i===0);$('#s2').classList.toggle('on',i===1);
+});
+
+/* reminders */
+const setIn=m=>{$('#when').value=loc(new Date(Date.now()+m*6e4))}; setIn(10);
+$('#chips').onclick=e=>{const b=e.target.closest('button');if(!b)return;
+  if(b.dataset.m)setIn(+b.dataset.m);
+  else{const d=new Date();d.setDate(d.getDate()+1);d.setHours(9,0,0,0);$('#when').value=loc(d)}};
+function render(){
+  const now=Date.now(), L=[...items].sort((a,b)=>a.at-b.at);
+  $('#list').innerHTML=L.length?L.map(r=>{
+    const cls=r.done?'past':(r.fired?'due':'');
+    return `<div class="item ${cls}">${icon('bell')}<div class="t"><div class="tx">${r.text.replace(/</g,'&lt;')}</div><div class="tm">${fmt(r.at)}</div></div>
+    ${!r.done&&r.fired?`<button data-a="snz" data-id="${r.id}" aria-label="۵ دقیقه بعد">${icon('snooze')}</button>`:''}
+    ${!r.done?`<button data-a="ok" data-id="${r.id}" aria-label="انجام شد">${icon('check')}</button>`:''}
+    <button class="del" data-a="del" data-id="${r.id}" aria-label="حذف">${icon('trash')}</button></div>`}).join('')
+    :'<div class="empty">هنوز چیزی نیست. بگو یا بنویس.</div>';
+}
+$('#list').onclick=e=>{const b=e.target.closest('button');if(!b)return;const r=items.find(x=>x.id==b.dataset.id);if(!r)return;
+  if(b.dataset.a==='ok')r.done=true;
+  if(b.dataset.a==='snz'){r.at=Date.now()+3e5;r.fired=false}
+  if(b.dataset.a==='del')items=items.filter(x=>x!==r);
+  save();render()};
+$('#add').onclick=async()=>{
+  const text=$('#txt').value.trim(), at=new Date($('#when').value).getTime();
+  if(!text)return toast('متن یادآور خالیه');
+  if(!at||at<Date.now()-6e4)return toast('زمان باید در آینده باشه');
+  if('Notification' in window&&Notification.permission==='default'){try{await Notification.requestPermission()}catch(e){}}
+  items.push({id:Date.now(),text,at,fired:false,done:false});save();render();
+  $('#txt').value='';setIn(10);toast('ثبت شد');
+};
+
+/* alert on due */
+let actx;
+function beep(){try{actx=actx||new (window.AudioContext||window.webkitAudioContext)();
+  [0,.22,.44].forEach(t=>{const o=actx.createOscillator(),g=actx.createGain();o.type='sine';o.frequency.value=880;
+  g.gain.setValueAtTime(.0001,actx.currentTime+t);g.gain.exponentialRampToValueAtTime(.25,actx.currentTime+t+.03);g.gain.exponentialRampToValueAtTime(.0001,actx.currentTime+t+.18);
+  o.connect(g).connect(actx.destination);o.start(actx.currentTime+t);o.stop(actx.currentTime+t+.2)})}catch(e){}}
+async function notify(r){
+  if(navigator.vibrate)navigator.vibrate([200,100,200]);beep();
+  if('Notification' in window&&Notification.permission==='granted'){
+    const o={body:r.text,tag:'yv'+r.id,requireInteraction:true,lang:'fa',dir:'rtl'};
+    try{const reg=await navigator.serviceWorker.getRegistration();reg?reg.showNotification('یادآور',o):new Notification('یادآور',o)}catch(e){try{new Notification('یادآور',o)}catch(_){}}
+  }
+  toast('⏰ '+r.text);
+}
+function tick(){let ch=false;const now=Date.now();
+  items.forEach(r=>{if(!r.done&&!r.fired&&r.at<=now){r.fired=true;ch=true;notify(r)}});
+  if(ch){save();render()}}
+setInterval(tick,1000);document.addEventListener('visibilitychange',tick);
+
+/* voice */
+const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+const langs={fa:'fa-IR',en:'en-US'};let VL='fa';
+function setLang(l){VL=l;['#lg1','#lg2'].forEach(s=>$(s).textContent=l==='fa'?'فا':'EN')}
+['#lg1','#lg2'].forEach(s=>$(s).onclick=()=>setLang(VL==='fa'?'en':'fa'));
+let rec=null;
+document.querySelectorAll('.micwrap').forEach(w=>{const d=document.createElement('div');d.className='vs';w.after(d)});
+function vs(m,err){document.querySelectorAll('.vs').forEach(d=>{d.textContent=m||'';d.classList.toggle('err',!!err)})}
+const ERR={
+ 'not-allowed':'دسترسی میکروفن بسته است. آیفون: دکمه aA کنار آدرس ← Website Settings ← Microphone ← Allow',
+ 'service-not-allowed':'تشخیص گفتار خاموش است. تنظیمات ← General ← Keyboard ← Enable Dictation را روشن کن (و Siri را هم)',
+ 'network':'سرویس تشخیص صدا (اپل/گوگل) در دسترس نیست؛ احتمالاً فیلتر یا قطعی اینترنت',
+ 'no-speech':'صدایی شنیده نشد؛ دوباره بزن و نزدیک‌تر حرف بزن',
+ 'audio-capture':'میکروفن پیدا نشد',
+ 'language-not-supported':'این زبان پشتیبانی نمی‌شود؛ زبان صدا را عوض کن',
+ 'aborted':''
+};
+async function listen(btn,onText,onEnd){
+  if(rec){rec.stop();return}
+  if(!SR){vs('این مرورگر تشخیص گفتار ندارد. در Safari آیفون یا Chrome اندروید باز کن، یا از میکروفن کیبورد استفاده کن',1);return}
+  if(!window.isSecureContext){vs('صفحه باید با https باز شود',1);return}
+  try{const st=await navigator.mediaDevices.getUserMedia({audio:true});st.getTracks().forEach(t=>t.stop())}
+  catch(e){vs(ERR['not-allowed']+' ['+(e.name||'mic')+']',1);return}
+  rec=new SR();rec.lang=langs[VL];rec.interimResults=true;rec.continuous=false;
+  let got=false;
+  rec.onstart=()=>vs('گوش می‌دهم…');
+  rec.onresult=e=>{got=true;let t='';for(const x of e.results)t+=x[0].transcript;onText(t)};
+  rec.onerror=e=>vs((ERR[e.error]!==undefined?ERR[e.error]:'خطا در تشخیص صدا')+(e.error&&e.error!=='aborted'?' ['+e.error+']':''),e.error!=='aborted');
+  rec.onend=()=>{btn.classList.remove('on');rec=null;if(got){vs('')}onEnd&&onEnd()};
+  btn.classList.add('on');
+  try{rec.start()}catch(e){btn.classList.remove('on');rec=null;vs('شروع تشخیص ممکن نشد ['+e.name+']',1)}
+}
+$('#mic1').onclick=e=>listen(e.currentTarget,t=>$('#txt').value=t);
+$('#mic2').onclick=e=>listen(e.currentTarget,t=>$('#src').value=t,()=>translate());
+
+/* translator */
+const isFa=s=>/[\u0600-\u06FF]/.test(s);
+const good=(c,t)=>!!c&&!/<[^>]+>|&lt;|&gt;/.test(c)&&(t==='en'?!/[\u0600-\u06FF]/.test(c):/[\u0600-\u06FF]/.test(c));
+async function J(url){const c=new AbortController();const id=setTimeout(()=>c.abort(),7000);try{return await (await fetch(url,{signal:c.signal})).json()}finally{clearTimeout(id)}}
+async function gtx(q,s,t){const j=await J('https://translate.googleapis.com/translate_a/single?client=gtx&dt=t&sl='+s+'&tl='+t+'&q='+encodeURIComponent(q));return j[0].map(x=>x[0]).join('')}
+async function mm(q,s,t){const j=await J('https://api.mymemory.translated.net/get?q='+encodeURIComponent(q)+'&langpair='+s+'|'+t);
+  const c=[j.responseData&&j.responseData.translatedText,...(j.matches||[]).sort((a,b)=>b.match-a.match).map(m=>m.translation)];return c.find(x=>good(x,t))}
+let tseq=0;
+async function translate(){
+  const q=$('#src').value.trim();if(!q){$('#out').textContent='';return}
+  const f=isFa(q),s=f?'fa':'en',t=f?'en':'fa',my=++tseq;
+  $('#out').dir=f?'ltr':'rtl';$('#out').textContent='…';
+  let res='';
+  for(const fn of [gtx,mm]){try{const r=await fn(q,s,t);if(good(r,t)){res=r;break}}catch(e){}}
+  if(my!==tseq)return;
+  $('#out').textContent=res;if(!res)toast('ترجمه انجام نشد؛ اینترنت یا فیلتر مترجم رو چک کن');
+}
+let tt;$('#src').oninput=()=>{clearTimeout(tt);tt=setTimeout(translate,700)};
+$('#clr').onclick=()=>{$('#src').value='';$('#out').textContent=''};
+$('#cp').onclick=async()=>{try{await navigator.clipboard.writeText($('#out').textContent);toast('کپی شد')}catch(e){toast('کپی نشد')}};
+$('#spk').onclick=()=>{const t=$('#out').textContent;if(!t||!window.speechSynthesis)return;
+  const u=new SpeechSynthesisUtterance(t);u.lang=isFa(t)?'fa-IR':'en-US';speechSynthesis.cancel();speechSynthesis.speak(u)};
+
+if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
+render();tick();
+</script>
+</body>
+</html>
